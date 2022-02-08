@@ -1,0 +1,95 @@
+
+
+/***************************************************************************************************************
+ *  Smart Cradle using NodeMCU ESP-12 Develop 
+ *  Input Sensor :Sound sensor
+ *               :Water Sensor
+ *               :PIR sensor
+ *               :Temperature and humidity sensor
+ *  Actuators    : Servo motor
+ *****************************************************************************************************************/
+/* ESP 8266 Library*/
+#include <ESP8266WiFi.h>;
+#include <PubSubClient.h>
+
+
+//Servo 
+#include <Servo.h>   // Include the library
+Servo servo1;        // Create the Servo and name it "servo1"
+#define servo1Pin D8 // Define the NodeMCU pin D8 to attach the Servo
+
+
+/* TIMER Library*/
+#include <SimpleTimer.h>
+SimpleTimer timer;
+
+#define PirSensorPin   D1 // PIR Sensor connected to digital pin D1
+#define Watersensor    D2 // Water/Wet sensor to Digital pin D2
+#define SoundSensorPin A0 // Analog sound sensor to Analog input in A0
+int PIR_Sensor   = 0; 
+int Water_Sensor = 0;
+int Sound_Level  = 0;
+
+
+/* DHT11*/
+#include "DHT.h"
+#define DHTPIN D0 // DHT 11 : Temperature & humidity sensor connected to digital pin D0
+#define DHTTYPE DHT11 // Sensor type : DHT11
+DHT dht(DHTPIN, DHTTYPE); // Send DHT pin and type parameter to DHT Function 
+float hum = 0; /* at init humidity is 0 */
+float temp = 0;/* at init temp is 0*/
+
+
+
+
+
+
+
+
+
+// sensor Pm 2.5, input data 
+unsigned int samplingTime = 280;
+unsigned int deltaTime = 40;
+unsigned int sleepTime = 9620;
+
+void PM(){ 
+ float voCount = 0; 
+ float voMeasuredTotal = 0; 
+
+  while (voCount <= 10) {
+
+    digitalWrite(ledPower, LOW);     // Turn on  IR LED 
+    delayMicroseconds(samplingTime);   //Delay 0.28ms
+
+    voMeasured = analogRead(measurePin); // read value 
+    
+    digitalWrite(ledPower, HIGH);    // Tắt LED 
+    delayMicroseconds(sleepTime);     //Delay 9.62ms 
+    
+    voMeasuredTotal += voMeasured;    // Tính tổng lần lấy mẫu 
+    voCount ++;              // Đếm số lần lấy mẫu 
+  } 
+
+
+  voMeasured = 1.0 * voMeasuredTotal / 100; //Tính trung bình 
+  
+
+  //**************************** 
+  calcVoltage = voMeasured / 1024 * 5; //Tính điện áp Vcc của cảm biến (5.0 hoặc 3.3) 
+  dustDensity = calcVoltage / K * 100.0; 
+   client.publish("pm25/state", String(dustDensity).c_str()); 
+  Serial.println(dustDensity); 
+}
+
+//Dinh nghia wifi ket noi den NodeMCU
+#define wifi_ssid "Name" // ten wifi ma ESP8266 se ket noi
+#define wifi_password "123" // mat khau wifi
+
+
+
+//mqtt 
+ void setup(){
+ 	Serial.begin(115200);
+ 	Serial.println("Device is in wake up mode");
+
+ }
