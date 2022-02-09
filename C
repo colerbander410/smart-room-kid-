@@ -4,6 +4,7 @@
  *               :Water Sensor
  *               :PIR sensor
  *               :Temperature and humidity sensor
+ *               :Pulse sensor 
  *  Actuators    : Servo motor
  *****************************************************************************************************************/
 
