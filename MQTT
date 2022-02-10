@@ -1,0 +1,9 @@
+ #include <ESP8266Wifi.h>
+ #include <PubSubClient.h>
+
+ // Wifi information 
+ #define ssid "name_wifi"
+ #define password "pass_wifi"
+
+ // MQTT information
+ #define mqtt_server ""
